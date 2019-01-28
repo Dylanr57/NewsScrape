@@ -1,4 +1,5 @@
 const express = require("express");
+const exphbs = require("express-handlebars");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const cheerio = require("cheerio");
@@ -43,7 +44,39 @@ app.get("/scrape",function(req,res){
 
 });
 
+app.get("/articles", function(req, res){
+    db.Article.find({})
+    .then(function(dbArticle){
+        res.json(dbArticle);
+    })
+    .catch(function(err){
+        res.json(err);
+    });
+});
 
+app.get("/articles/:id", function(req, res){
+    db.Article.findOne({_id: req.params.id})
+    .populate("note")
+    .then(function(dbArticle){
+        res.json(dbArticle);
+    })
+    .catch(function(err){
+        res.json(err);
+    });
+});
+
+app.post("/articles/:id", function(req,res){
+    db.Note.create(req.body)
+    .then(function(dbNote){
+        return dbArticle.findOneAndUpdate({ _id: req.params.id}, {note: dbNote._id}, {new: true});
+    })
+    .then(function(dbArticle){
+        res.json(dbArticle);
+    })
+    .catch(function(err){
+        res.json(err);
+    })
+})
 
 app.listen(PORT, function() {
     console.log("App running on port " + PORT);
