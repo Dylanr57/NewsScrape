@@ -11,10 +11,15 @@ var PORT = process.env.PORT || 8080;
 app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 app.use(express.static("public"));
+var databaseUri = "mongodb://localhost/mongoHeadlines"
 
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-
-mongoose.connect(MONGODB_URI);
+if (process.env.MONGODB_URI) {
+    mongoose.connect(process.env.MONGODB_URI)
+    console.log("connected online db");
+}else{
+    mongoose.connect(databaseUri);
+    console.log("connected local db");
+}
 
 app.get("/scrape",function(req,res){
 
